@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>转化为二进制</title>
+    <style>
+    </style>
+</head>
+<body>        
+    <p id="greeting"></p>
+    <script>
+        // 今天最后一个练习，在你的简历中，实现一个，当用户访问页面的时候，根据当前时间，在页面中输出不同的问候语。
+        // 比如早上的时候，输出早上好，晚上的时候是晚上好。
+        const greeting = document.querySelector('#greeting');
+        const date = new Date().getHours();
+        console.log(date);
+        let content = '';
+        if(date > 4 && date <= 9) {
+            content = '早上好';
+        }else if(date > 9 && date <= 12){
+            content = '上午好';
+        }else if(date > 12 && date <= 18) {
+            content = '下午好';
+        }else if(date > 18 && date <= 24) {
+            content = '晚上好';
+        }else if(date >= 0 && date <= 4) {
+            content = '凌晨好';
+        }
+        greeting.innerHTML = content;
+    </script>
+</body>
+</html>

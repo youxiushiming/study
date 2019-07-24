@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>转化为二进制</title>
+    <style>
+        table,
+        tr, 
+        td {
+            border: 1px solid #999;
+        }
+    </style>
+</head>
+<body>        
+    <table id="result"></table>
+    <script>
+    // 3的小游戏，练习使用循环和条件语句，实现如下需求：
+
+    // 从1到100，以此在console输出各数字，但是，当数字为3的倍数或者含有3的时候，输出“PA”
+    // 比如：1,2,PA,4,5,PA,……,11,PA,PA,14,PA……
+    let num = 0;
+    for(let i = 1; i < 9; i++){
+        let res = []; 
+        let tabledata = [];
+        let row;
+        const column  = document.createElement('tr');
+        for(let j = 1; j <= i; j++){
+            num = i * j;
+            res.push(`${i} * ${j} = ${num}`);
+            row = document.createElement('td');
+            row.innerHTML = `${i} * ${j} = ${num}`;
+            column.appendChild(row);
+        }
+        console.log(res.join(' '));
+        const table = document.querySelector('#result');
+        table.appendChild(column);
+    }
+    
+    </script>
+</body>
+</html>
