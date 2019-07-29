@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>IFE ECMAScript</title>
+</head>
+<body>        
+    <input id="name" type="text">    
+    <button id="submit-btn">Submit</button>
+    <p id="p1">This is an example paragraph.</p>
+
+    <input type="button" onclick="setFontStretch()" value="Stretch font" />
+
+    <script>
+        // 当点击按钮 submit-btn 时，在console中输出 name 中的内容
+        // 在输入过程中，如果按回车键，则同样执行上一条的需求
+        // 在输入过程中，如果按 ESC 键，则把输入框中的内容清空
+        const sub = document.querySelector('#submit-btn');
+        const subFn = () => {
+            const name = document.querySelector('#name');
+            console.log(`输入的内容为：${name.value}`);
+        }
+        sub.onclick = subFn;
+        
+        // document.onkeydown = (e) => {
+        //     if(e.keyCode === 13){
+        //         // 回车
+        //         subFn();
+        //     }else if(e.keyCode === 27){
+        //         // esc
+        //         const name = document.querySelector('#name');
+        //         console.log(`清空输入数据${name.value}`)
+        //         name.value = '';
+                
+        //     }
+        // }
+
+        document.addEventListener('keydown', function(e){
+            if(e.keyCode === 13){
+                // 回车
+                subFn();
+            }else if(e.keyCode === 27){
+                // esc
+                const name = document.querySelector('#name');
+                console.log(`清空输入数据${name.value}`)
+                name.value = '';
+                
+            }
+		}, false);
+        function setFontStretch(){
+            document.getElementById("p1").style.fontStretch="ultra-expanded";
+        }
+    </script>
+</body>
+</html>

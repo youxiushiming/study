@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>IFE ECMAScript</title>
+    <style>
+        .palette {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .palette li {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>            
+    <div id="fade-obj" style="width:300px;height:300px;background:#000"></div>
+    <button id="fade-btn">淡出</button>
+    <div id="fade-obj2" style="width:300px;height:300px;background:#000; opacity: 0;"></div>
+    <script>
+        
+        const fadebtn = document.querySelector('#fade-btn');
+        let flag = 0;
+        fadebtn.onclick = (e) => {
+            if(!flag){
+                // 首次点击
+                flag = flag + 1;
+                fadebtn.disabled = true;
+                const fadeobj = document.querySelector('#fade-obj');
+                fadeobj.style.opacity = 1;
+                const timer = setInterval(()=> {
+                    if(fadeobj.style.opacity > 0){
+                        fadeobj.style.opacity = fadeobj.style.opacity - 0.1;
+                    }else{
+                        clearInterval(timer);
+                        fadebtn.disabled = false;
+                        fadebtn.innerHTML = '淡入';
+                        fadebtn.style.opacity = 0;
+                        const pshow = setInterval(() => {
+                            if(fadebtn.style.opacity < 1){
+                                    fadebtn.style.opacity = +(fadebtn.style.opacity) + 0.1;
+                                }else{
+                                    clearInterval(pshow);
+                                    
+                                }
+                        }, 2000);
+                    }
+                }, 2000)
+            }else{
+                // 非首次
+                fadebtn.disabled = true;
+                const fadeobj2 = document.querySelector('#fade-obj2');
+                const timer2 = setInterval(() => {
+                    if(fadeobj2.style.opacity < 1){
+                        fadeobj2.style.opacity = +(fadeobj2.style.opacity) + 0.1;
+                    }else{
+                        clearInterval(timer2);
+                        fadebtn.innerHTML = '淡出';
+                        fadebtn.disabled = false;
+                    }
+                }, 2000)
+            }
+            
+            
+        }
+
+        
+    </script>
+</body>
+</html>

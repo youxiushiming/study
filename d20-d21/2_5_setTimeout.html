@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>IFE ECMAScript</title>
+    <style>
+        .palette {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .palette li {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>            
+    <div id="fade-obj" style="width:300px;height:300px;background:#000"></div>
+    <button id="fade-btn">淡出</button>
+    <div id="fade-obj2" style="width:300px;height:300px;background:#000; opacity: 0;"></div>
+    <script>
+        const fadeobj = document.querySelector('#fade-obj');
+        const fadeobj2 = document.querySelector('#fade-obj2');
+        const setOpyDanchu = () => {
+            const timer = setTimeout(()=> {
+                
+                    if(fadeobj.style.opacity > 0){
+                        fadeobj.style.opacity = fadeobj.style.opacity - 0.1;
+                        setOpyDanchu();
+                    }else{
+                        clearTimeout(timer);
+                        fadebtn.disabled = false;
+                        fadebtn.innerHTML = '淡入';
+                        fadebtn.style.opacity = 0;
+                        setOpyDanru();
+                    }
+            }, 100);
+        }
+        const setOpyDanru = () => {
+            const timer = setTimeout(()=> {
+                if(fadebtn.style.opacity < 1){
+                    fadebtn.style.opacity = +(fadebtn.style.opacity) + 0.1;
+                    setOpyDanru();
+                }else{
+                    clearTimeout(timer);
+                }
+            }, 100);
+        }
+        const setDanru2 = () => {
+            const timer2 = setTimeout(() => {
+                if(fadeobj2.style.opacity < 1){
+                    fadeobj2.style.opacity = +(fadeobj2.style.opacity) + 0.1;
+                    setDanru2();
+                }else{
+                    clearTimeout(timer2);
+                    fadebtn.innerHTML = '淡出';
+                    fadebtn.disabled = false;
+                }
+            }, 100)
+        }
+
+        const fadebtn = document.querySelector('#fade-btn');
+        let flag = 0;
+        fadebtn.onclick = (e) => {
+            if(!flag){
+                // 首次点击
+                flag = flag + 1;
+                fadebtn.disabled = true;
+                fadeobj.style.opacity = 1;
+                setOpyDanchu();
+            }else{
+                // 非首次
+                fadebtn.disabled = true;
+                
+                setDanru2();
+            }
+            
+            
+        }
+
+        
+    </script>
+</body>
+</html>

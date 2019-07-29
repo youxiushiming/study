@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+    .roundedBox {position:relative; padding:17px; margin:10px 0;}
+    .corner {position:absolute; width:17px; height:17px;}
+    .topLeft {top:0; left:0; background-position:-1px -1px;}
+    .topRight {top:0; right:0; background-position:-19px -1px;}
+    .bottomLeft {bottom:0; left:0; background-position:-1px -19px;}
+    .bottomRight {bottom:0; right:0; background-position:-19px -19px;}
+    #type1 {background-color:#CCDEDE;}
+    #type1 .corner {background-image:url(./201642792945617.gif);}
+    .cor {
+        width: 69px;
+        height: 69px;
+        background-image: url(http://ife.baidu.com/2016/static/img/erik_ce204002.jpg); 
+        /* background-size: 100% 100%; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .smile {
+        background-position: 0px 69px;
+    }
+    .container {
+        position: relative;
+        width: 100px;
+        height: 1188px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="cor smile"></div>
+    </div>
+    <script>
+        const smile = document.querySelector('.smile');
+        let x = 0;
+        let y = 69;
+        const int = setInterval(() => {
+            if(y < 69*17){
+                smile.style.backgroundPosition.x = x + 'px';
+                smile.style.backgroundPosition.y = y + 'px';
+                x = x + 69;
+                y = y + 69;
+            }else{
+                clearInterval(int);
+            }
+        }, 100)
+    </script>
+</body>
+</html>
