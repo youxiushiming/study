@@ -13,9 +13,9 @@
     #type1 {background-color:#CCDEDE;}
     #type1 .corner {background-image:url(./201642792945617.gif);}
     .cor {
-        width: 69px;
-        height: 69px;
-        background-image: url(http://ife.baidu.com/2016/static/img/erik_ce204002.jpg); 
+        width: 480px;
+        height: 480px;
+        background-image: url(./erik_ce204002.jpg); 
         /* background-size: 100% 100%; */
         position: absolute;
         top: 0;
@@ -23,7 +23,7 @@
         right: 0;
     }
     .smile {
-        background-position: 0px 69px;
+        background-position: 0px -480px;
     }
     .container {
         position: relative;
@@ -39,17 +39,20 @@
     <script>
         const smile = document.querySelector('.smile');
         let x = 0;
-        let y = 69;
-        const int = setInterval(() => {
-            if(y < 69*17){
-                smile.style.backgroundPosition.x = x + 'px';
-                smile.style.backgroundPosition.y = y + 'px';
-                x = x + 69;
-                y = y + 69;
-            }else{
-                clearInterval(int);
-            }
-        }, 100)
+        let y = 480;
+        const setSmile = () => {
+            const int = setTimeout(() => {
+                console.log(y)
+                if(y < +(480*17)){
+                    smile.style.backgroundPositionY = y + 'px';
+                    y = +(y + 480);
+                    setSmile();
+                }else{
+                    clearTimeout(int);
+                }
+            }, 100)
+        }
+        setSmile();
     </script>
 </body>
 </html>
