@@ -1,0 +1,242 @@
+<head>
+
+</head>
+
+<body>
+    <select id="year-select">
+    </select>
+
+    <select id="month-select">
+    </select>
+
+    <select id="day-select">
+    </select>
+
+    <select id="hour-select">
+    </select>
+
+    <select id="minite-select">
+    </select>
+
+    <select id="second-select">
+    </select>
+
+    <p id="result-wrapper">现在距离 2001年1月1日星期X HH:MM:SS 还有 X 天 X 小时 X 分 X 秒</p>
+    <script>
+        // 现在我们要做一个稍微复杂的东西，如下HTML，有一堆Select用于选择日期和时间，在选择后，实时在 id 为 result-wrapper 的 p 标签中显示所选时间和当前时间的差值。
+        // 使用上方的HTML结构（可以根据需要自行微调）为基础编写JavaScript代码
+        // 当变更任何一个select选择时，更新 result-wrapper 的内容
+        // 当所选时间早于现在时间时，文案为 现在距离 "所选时间" 已经过去 xxxx
+        // 当所选时间晚于现在时间时，文案为 现在距离 "所选时间" 还有 xxxx
+        // 注意当前时间经过所选时间时候的文案变化
+        // 注意选择不同月份的时候，日期的可选范围不一样，比如1月可以选31天，11月只有30天，注意闰年
+        // 同样，需要注意，通过优雅的函数封装，使得代码更加可读且可维护
+        const getDay = (date) => {
+            const week = ['日', '一', '二', '三', '四', '五', '六'];
+            const day = week[date.getDay()];
+            return day;
+        }
+        const checkDate = (data) => {
+            if (data < 10) {
+                return `0${data}`;
+            } else {
+                return data;
+            }
+        }
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = checkDate(date.getMonth() + 1);
+            const day = checkDate(date.getDate());
+            const hour = checkDate(date.getHours());
+            const min = checkDate(date.getMinutes());
+            const sec = checkDate(date.getSeconds());
+            const week = getDay(date);
+            return `${year}年${month}月${day}日星期${week} ${hour}:${min}:${sec}`;
+        }
+        const getSelectValue = (id) => {
+            const obj = document.querySelector(id);
+            return obj.options[obj.selectedIndex].value;
+        }
+        const getSelectDate = () => {
+            const year = getSelectValue('#year-select');
+            const month = getSelectValue('#month-select');
+            const day = getSelectValue('#day-select');
+            const hour = getSelectValue('#hour-select');
+            const minite = getSelectValue('#minite-select');
+            const second = getSelectValue('#second-select');
+            const selectDate = new Date(year, month - 1, day, hour, minite, second);
+            return selectDate;
+        }
+        const getMonthDay = (year, month) => {
+            let monthdata = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (year % 4 === 0) {
+                monthdata[1] = 29;
+            }
+            return monthdata[month];
+        }
+        const year = document.querySelector('#year-select');
+        const month = document.querySelector('#month-select');
+        const day = document.querySelector('#day-select');
+        const hour = document.querySelector('#hour-select');
+        const minite = document.querySelector('#minite-select');
+        const second = document.querySelector('#second-select');
+        const getTimeCount = (selectDate, curDate) => {
+            const diff = selectDate.getTime() - curDate.getTime();
+            const day = parseInt(diff / (24 * 60 * 60 * 1000));
+            const remainHour = day % (24 * 60 * 60 * 1000);
+            const hour = parseInt(remainHour / (60 * 60 * 1000));
+            const remainMin = hour % (60 * 60 * 1000);
+            const min = parseInt(remainMin / (60 * 1000));
+            const remainSec = remainMin % (60 * 1000);
+            const sec = parseInt(min / 1000);
+            const secmin = min % 1000;
+            return { day, hour, min, sec, secmin }
+        }
+        const refreshCnt = () => {
+            const selectDate = getSelectDate();
+            let time = document.querySelector('#result-wrapper');
+            const curDate = new Date();
+            const diff = get_time_diff(curDate, selectDate);
+            const curTimeStr = formatDate(curDate);
+            const selTimeStr = formatDate(selectDate);
+            time.innerHTML = `现在${curTimeStr}距离 ${selTimeStr} ${diff}`;
+        }
+        const get_time_diff = (curTime, selectDate) => {
+            var diff = '';
+            var time_diff = curTime.getTime() - selectDate.getTime(); //时间差的毫秒数 
+
+            //计算出相差天数 
+            var days = parseInt(time_diff / (24 * 3600 * 1000));
+            if (days > 0) {
+                diff += days + '天';
+            } else {
+                diff += Math.abs(days) + '天';
+            }
+            //计算出小时数 
+            var leave1 = time_diff % (24 * 3600 * 1000);
+            var hours = parseInt(leave1 / (3600 * 1000));
+            if (hours > 0) {
+                diff += hours + '小时';
+            } else {
+                if (diff !== '') {
+                    diff += Math.abs(hours) + '小时';
+                }
+            }
+            //计算相差分钟数 
+            var leave2 = leave1 % (3600 * 1000);
+            var minutes = parseInt(leave2 / (60 * 1000));
+            if (minutes > 0) {
+                diff += minutes + '分';
+            } else {
+                if (diff !== '') {
+                    diff += Math.abs(minutes) + '分';
+                }
+            }
+            //计算相差秒数 
+            var leave3 = leave2 % (60 * 1000);
+            var seconds = parseInt(leave3 / 1000);
+            if (seconds > 0) {
+                diff += seconds + '秒';
+            } else {
+                if (diff !== '') {
+                    diff += Math.abs(seconds) + '秒';
+                }
+            }
+            if (day < 0 || hours < 0 || minutes < 0 || seconds < 0) {
+                diff = '还有' + diff;
+            } else {
+                diff = '已经过去' + diff;
+            }
+            return diff;
+        }
+        const start = () => {
+            refreshCnt();
+            setTimeout(() => {
+                start();
+            }, 500);
+        }
+        
+        const setYearData = () => {
+            const curYear = new Date().getFullYear();
+            addOption('year-select', curYear - 5, curYear + 5);
+            const yearSec = document.getElementById("year-select");
+            for (let i in yearSec.options) {
+                if (yearSec[i].value == curYear) {
+                    document.getElementById("year-select").options.selectedIndex = i;
+                }
+            }
+        }
+        const setMonthData = () => {
+            addOption('month-select', 0, 12);
+            document.getElementById("month-select").options.selectedIndex = 0;
+        }
+        const setMonthDays = () => {
+            const year = getSelectValue('#year-select');
+            const month = getSelectValue('#month-select');
+            const monthday = document.getElementById("day-select");
+            const day = getMonthDay(year, month - 1);
+            const child = monthday.options.length;
+            if(!child){
+                addOption('day-select', 0, day);
+            }else if(child > day){
+                let num = child - day;
+                for(let i = num; i > 0; i--){
+                    monthday.removeChild(monthday.lastChild);
+                }
+            }else {
+                addOption('day-select', child, day);
+            }
+            document.getElementById("day-select").options.selectedIndex = 0;
+        }
+        const addOption = (id, min, max) => {
+            for (let i = min; i < max; i++) {
+                var selectbox = document.getElementById(id);
+                var newOption = document.createElement("option");
+                newOption.appendChild(document.createTextNode(i + 1));
+                newOption.setAttribute("value", i + 1);
+                selectbox.appendChild(newOption);
+            }
+        }
+        const setHour = () => {
+            addOption('hour-select', -1, 23);
+            document.getElementById("hour-select").options.selectedIndex = 0;
+        }
+        const setMin = () => {
+            addOption('minite-select', -1, 59);
+            document.getElementById("minite-select").options.selectedIndex = 0;
+        }
+        const setSec = () => {
+            addOption('second-select', -1, 59);
+            document.getElementById("second-select").options.selectedIndex = 0;
+        }
+        window.onload = () => {
+            setYearData();
+            setMonthData();
+            setMonthDays();
+            setHour();
+            setMin();
+            setSec();
+            start();
+        }
+        year.onchange = () => {
+            refreshCnt();
+        }
+        month.onchange = () => {
+            refreshCnt();
+            setMonthDays();
+        }
+        day.onchange = () => {
+            refreshCnt();
+        }
+        hour.onchange = () => {
+            refreshCnt();
+        }
+
+        minite.onchange = () => {
+            refreshCnt();
+        }
+        second.onchange = () => {
+            refreshCnt();
+        }
+    </script>
+</body>

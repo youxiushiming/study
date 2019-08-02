@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>IFE ECMAScript</title>
+</head>
+<body>        
+    <input id="queue-input" type="text">
+    <p id="queue-cont">队列内容：apple&lt;-pear</p>    
+    <button id="in-btn">入队</button>
+    <button id="out-btn">出队</button>
+    <button id="font-btn">打印队头元素内容</button>
+    <button id="empty-btn">判断队列是否为空</button>
+    
+    <script>
+    
+    var queue = ["apple", "pear"];
+    // 队列：先进先出
+    //     队头对应数组中第一个元素
+    // 入队和出队操作后，需要在 id 为 queue-cont 的 p 标签中更新显示队列中的内容，队头在最左侧，中间用 <- 连接（练习使用数组的join方法）出队操作后，需要在 id 为 queue-cont 的 p 标签中更新显示队列中的内容，队头在最右侧，中间用 -> 连接（练习使用数组的join方法）
+    const queueinput = document.querySelector('#queue-input');
+    const inbtn = document.querySelector('#in-btn');
+    const outbtn = document.querySelector('#out-btn');
+    const fontbtn = document.querySelector('#font-btn');
+    const emptybtn = document.querySelector('#empty-btn');
+    const queuecont = document.querySelector('#queue-cont');
+    const refreshQueue = () => {
+        queuecont.innerHTML = `队列内容：${queue.join('&lt;-')}`
+    }
+    inbtn.onclick = () => {
+        if(queueinput.value){
+            queue.push(queueinput.value);
+            refreshQueue();
+        }
+    }
+    outbtn.onclick = () => {
+        queue.shift();
+        refreshQueue();
+    }
+    fontbtn.onclick = () => {
+        console.log(queue[0]); 
+    }
+    emptybtn.onclick = () => {
+        const isEmpty = !!queue.length;
+        console.log(isEmpty ? '非空队列': '空队列')
+    }
+    </script>
+</body>
+</html>
