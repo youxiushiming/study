@@ -1,0 +1,80 @@
+<head>
+    <style>
+        ul,  li {
+            margin: 0;
+            padding: 0;
+        }
+        #email-sug-wrapper li{
+            list-style-type: none;
+            border: 1px solid #999;
+            width: 200px;
+            padding: 2px 3px;
+        }    
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <input id="email-input" type="text">
+        <ul id="email-sug-wrapper" class="email-sug"></ul>
+    </div>
+    <script>
+        var postfixList = ['163.com', 'gmail.com', '126.com', 'qq.com', '263.net'];
+        const input = document.querySelector('#email-input');
+        const ul = document.querySelector('#email-sug-wrapper');
+        const addnode = (value) => {
+            for(let i= 0; i < postfixList.length; i++){
+                const li = document.createElement('li');
+                li.appendChild(document.createTextNode(`${value}@${postfixList[i]}`));
+                ul.appendChild(li);
+            }
+        }
+        const deletedata = () => {
+            const len = ul.childElementCount;
+            for(let i= 0; i < len; i++){
+                ul.removeChild(ul.firstChild)
+            }
+        }
+        const addemail = () => {
+            const value = input.value.trim();
+            if(!value) {
+                ul.style.display = 'none';
+            }else{
+                ul.style.display = 'block';
+            }
+            deletedata();
+            addnode(value);
+        }
+        input.onblur = () => {
+            addemail();
+        }
+        input.onchange = () => {
+            addemail();
+        }
+        input.oninput = () => {
+            console.log('onkeyinput')
+            addemail();
+        }
+        input.onkeyup = () => {
+            console.log('keyup')
+        }
+        input.onkeydown=function(e){  
+            console.log('onkeydown')
+            //对整个页面文档监听 
+            // var keyNum=window.event ? e.keyCode :e.which;  //获取被按下的键值 
+            // //判断如果用户按下了回车键（keycody=13）
+
+            // if(keyNum==13){ 
+            // alert('您按下了回车'); 
+            // } 
+            
+            // //判断如果用户按下了空格键(keycode=32)， 
+            // if(keyNum==32){ 
+            // alert('您按下了空格'); 
+            // }
+        }
+        input.onkeypress = () =>{
+            console.log('onkeypress')
+        }
+    </script>
+</body>
