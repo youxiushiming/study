@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>IFE ECMAScript</title>
+    <style type="text/css">
+        ul {
+            list-style-type: none;
+            margin: 0px;
+            padding: 0px;
+            border: 1px solid #ccc;
+            border-top: none;
+            font-size: 13px;
+            color: #778899;
+            overflow: hidden;
+            display: none;
+        }
+
+        #email-input {
+            width: 200px;
+            height: 30px;
+            padding-left: 5px;
+        }
+
+        ul li {
+            height: 30px;
+            line-height: 30px;
+            padding-left: 5px;
+        }
+
+        ul:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <input id="email-input" type="text" autofocus>
+        <ul id="email-sug-wrapper" class="email-sug"></ul>
+    </div>
+    <script type="text/javascript">
+        var postfixList = ['163.com', 'gmail.com', '126.com', 'qq.com', '263.net'];
+        var email = document.querySelector("#email-input");
+        var sug = document.querySelector("#email-sug-wrapper");
+        var arr = [];
+        var k = 0;
+        var flag = true;
+        var checkData = function (v) {
+            var entry = { "'": "&apos;", '"': '&quot;', '<': '&lt;', '>': '&gt;' };
+            v = v.replace(/(['")-><&\\\/\.])/g, function ($0) { return entry[$0] || $0; });
+            return v;
+        }
+        var getCss = function (element, attr) {
+            if (element.currentStyle) {
+                return element.currentStyle[attr];
+            } else {
+                return window.getComputedStyle(element, null)[attr];
+            }
+        }
+        var trim = function (str) {
+            return str.replace(/(^\s*)|(\s*$)/g, "");
+        }
+        var creatlis = function (str, ary) {
+            for (var i = 0; i < ary.length; i++) {
+                var li = document.createElement("li");
+                li.innerHTML = str + "@" + ary[i];
+                sug.appendChild(li);
+            }
+        }
+        var changeColor = function (obj, father) {
+            for (var j = 0; j < father.length; j++) {
+                father[j].style.backgroundColor = "";
+            }
+            obj.style.backgroundColor = "#CCFFFF";
+        }
+        sug.style.width = parseInt(getCss(email, "width")) + 7 + "px";
+        email.onkeyup = function () {
+            var uLi = sug.getElementsByTagName("li");
+            var tv = checkData(trim(this.value));
+            sug.innerHTML = "";
+            if (tv == '' || / /.test(tv) || /　/.test(tv)) {
+                sug.style.display = "none";
+            } else {
+                console.log(flag);
+                flag ? sug.style.display = "block" : sug.style.display = "none";
+                if (tv.indexOf("@") == -1) {
+                    creatlis(tv, postfixList);
+                } else {
+                    arr = [];
+                    var index = tv.indexOf("@");
+                    var reg = "/^" + tv.slice(index + 1) + "/";
+                    for (var j = 0; j < postfixList.length; j++) {
+                        if (eval(reg).test(postfixList[j])) {
+                            arr.push(postfixList[j]);
+                        }
+                    }
+                    arr.length >= 1 ? creatlis(tv.slice(0, index), arr) : creatlis(tv.slice(0, index), postfixList);
+                }
+                for (var i = 0; i < uLi.length; i++) {
+                    uLi[i].onmouseover = function () {
+                        changeColor(this, uLi);
+                    }
+                    uLi[i].onmouseout = function () {
+                        this.style.backgroundColor = "";
+                    }
+                }
+                email.onkeydown = function (event) {
+                    var event = event || window.event;
+                    if (event.keyCode == 40) {
+                        k++;
+                        k = k == uLi.length ? 0 : k;
+                    } else if (event.keyCode == 38) {
+                        k--;
+                        k = k == -1 ? uLi.length - 1 : k;
+                    } else if (event.keyCode == 13) {
+                        email.value = uLi[k].innerHTML;
+                        sug.style.display = "none";
+                        k = 0;
+                        flag = false;
+                    } else if (event.keyCode == 8) {
+                        k = 0;
+                        flag = true;
+                    } else if (event.keyCode == 27) {
+                        this.select();
+                    } else {
+                        k = 0;
+                    }
+
+                }
+                changeColor(uLi[k], uLi);
+            }
+        }
+        sug.onclick = function (event) {
+            var event = event || window.event;
+            email.value = event.target.innerHTML;
+            this.style.display = "none";
+            k = 0;
+            email.focus();
+        }
+
+    </script>
+</body>
+
+</html>

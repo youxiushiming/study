@@ -90,15 +90,18 @@
             }
             for(let i= 0; i < pflist.length; i++){
                 const li = document.createElement('li');
-                const cnttemp = HtmlUtil.htmlEncode(cnt);
+                const cnttemp = HtmlUtil.htmlEncodeByRegExp(cnt);
                 li.appendChild(document.createTextNode(`${cnttemp}@${pflist[i]}`));
                 ul.appendChild(li);
             }
         }
         const removedata = () => {
-            const len = ul.childElementCount;
-            for(let i= len - 1; i >= 0; i--){
-                ul.removeChild(ul.childNodes[i])
+            // const len = ul.childElementCount;
+            // for(let i= len - 1; i >= 0; i--){
+            //     ul.removeChild(ul.childNodes[i])
+            // }
+            while (ul.hasChildNodes()) {
+                ul.removeChild(ul.firstChild);
             }
         }
         const setSelected = (index) => {
@@ -116,7 +119,7 @@
             removedata();
             addnode(value);
             // 设置第一个选中态
-            setSelected(nowSelectTipIndex);
+            setSelected(0);
         }
         input.onblur = () => {
             addemail();
@@ -131,7 +134,7 @@
         ul.onclick = (e) => {
             console.log('onclick')
             if(e.target.nodeName.toLowerCase() == 'li'){
-                input.value = HtmlUtil.htmlDecode(HtmlUtil.htmlDecode(e.target.innerHTML));
+                input.value = HtmlUtil.htmlDecodeByRegExp(e.target.innerHTML);
                 ul.style.display = 'none';
                 removedata();
                 input.focus();
@@ -163,17 +166,19 @@
             // 将 nowSelectTipIndex 设为0
             nowSelectTipIndex = 0;
         }
-        input.onkeydown=function(e){  
+        input.onkeyup=function(e){  
+            const ul = document.querySelector('#email-sug-wrapper');
             console.log('onkeydown');
             // 对整个页面文档监听 
             var keyNum = window.event ? e.keyCode :e.which;  //获取被按下的键值 
             console.log(keyNum);
-            if([13, 40, 38, 27].includes(keyNum)){
+            if([13, 40, 38, 27].includes(keyNum) && ul.childElementCount){
                 //判断如果用户按下了回车键（keycody=13）
                 if(keyNum == 13){ 
                     console.log('您按下了回车'); 
                     ul.style.display = 'none';
-                    input.value = HtmlUtil.htmlDecode(HtmlUtil.htmlDecode(ul.childNodes[nowSelectTipIndex].innerHTML));
+                    input.value = HtmlUtil.htmlDecodeByRegExp(ul.childNodes[nowSelectTipIndex].innerHTML);
+                    
                     removedata();
                 } 
                 //判断如果用户按下了下键 
