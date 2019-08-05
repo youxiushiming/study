@@ -1,0 +1,161 @@
+<head>
+    <style>
+        ul,  li {
+            margin: 0;
+            padding: 0;
+        }
+        #email-sug-wrapper li{
+            list-style-type: none;
+            border: 1px solid #999;
+            width: 200px;
+            padding: 2px 3px;
+        }    
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <input id="email-input" type="text">
+        <ul id="email-sug-wrapper" class="email-sug"></ul>
+    </div>
+    <script>
+        var HtmlUtil = {
+        /*1.用浏览器内部转换器实现html转码*/
+        htmlEncode:function (html){
+            //1.首先动态创建一个容器标签元素，如DIV
+            var temp = document.createElement ("div");
+            //2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+            (temp.textContent != undefined ) ? (temp.textContent = html) : (temp.innerText = html);
+            //3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+            var output = temp.innerHTML;
+            temp = null;
+            return output;
+        },
+        /*2.用浏览器内部转换器实现html解码*/
+        htmlDecode:function (text){
+            //1.首先动态创建一个容器标签元素，如DIV
+            var temp = document.createElement("div");
+            //2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+            temp.innerHTML = text;
+            //3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+            var output = temp.innerText || temp.textContent;
+            temp = null;
+            return output;
+        },
+        /*3.用正则表达式实现html转码*/
+        htmlEncodeByRegExp:function (str){ 
+             var s = "";
+             if(str.length == 0) return "";
+             s = str.replace(/&/g,"&");
+             s = s.replace(/</g,"<");
+             s = s.replace(/>/g,">");
+             s = s.replace(/ /g," ");
+             s = s.replace(/\'/g,"'");
+             s = s.replace(/\"/g,'"');
+             return s; 
+       },
+       /*4.用正则表达式实现html解码*/
+       htmlDecodeByRegExp:function (str){ 
+             var s = "";
+             if(str.length == 0) return "";
+             s = str.replace(/&/g,"&");
+             s = s.replace(/</g,"<");
+             s = s.replace(/>/g,">");
+             s = s.replace(/ /g," ");
+             s = s.replace(/'/g,"\'");
+             s = s.replace(/"/g,"\"");
+             return s; 
+       }
+    };
+        var postfixList = ['163.com', 'gmail.com', '126.com', 'qq.com', '263.net'];
+        const input = document.querySelector('#email-input');
+        const ul = document.querySelector('#email-sug-wrapper');
+        const addnode = (value) => {
+            let cnt = value;
+            let rule = '';
+            let pflist = postfixList;
+            if(value.indexOf('@') > -1){
+                const sp = value.split('@');
+                cnt = sp[0];
+                rule = sp.length > 0 ? sp[1] : '';
+            }
+            if(rule){
+                const temp = postfixList.filter(item => item.includes(rule))
+                pflist = temp && temp.length ? temp : postfixList;
+            }
+            for(let i= 0; i < pflist.length; i++){
+                const li = document.createElement('li');
+                const cnttemp = HtmlUtil.htmlEncode(cnt);
+                li.appendChild(document.createTextNode(`${cnttemp}@${pflist[i]}`));
+                ul.appendChild(li);
+            }
+        }
+        const deletedata = () => {
+            const len = ul.childElementCount;
+            for(let i= len - 1; i >= 0; i--){
+                ul.removeChild(ul.childNodes[i])
+            }
+        }
+        const addemail = () => {
+            const value = input.value.trim();
+            if(!value) {
+                ul.style.display = 'none';
+            }else{
+                ul.style.display = 'block';
+            }
+            deletedata();
+            addnode(value);
+        }
+        input.onblur = () => {
+            addemail();
+        }
+        input.onchange = () => {
+            addemail();
+        }
+        input.oninput = () => {
+            console.log('onkeyinput')
+            addemail();
+        }
+        ul.onclick = (e) => {
+            console.log('onclick')
+            if(e.target.nodeName.toLowerCase() == 'li'){
+                input.value = HtmlUtil.htmlDecode(HtmlUtil.htmlDecode(e.target.innerHTML));
+                ul.style.display = 'none';
+            }
+        }
+        // ul.addEventListener('click', ulonclick);
+        ul.onmouseover = (e) => {
+            if(e.target.nodeName.toLowerCase() == 'li'){
+                e.target.style.backgroundColor = 'red';
+            }
+            
+        }
+        ul.onmouseout = (e) => {
+            if(e.target.nodeName.toLowerCase() == 'li'){
+                e.target.style.backgroundColor = '#fff';
+            }
+        }
+       
+        // input.onkeyup = () => {
+        //     console.log('keyup')
+        // }
+        // input.onkeydown=function(e){  
+        //     console.log('onkeydown')
+        //     //对整个页面文档监听 
+        //     // var keyNum=window.event ? e.keyCode :e.which;  //获取被按下的键值 
+        //     // //判断如果用户按下了回车键（keycody=13）
+
+        //     // if(keyNum==13){ 
+        //     // alert('您按下了回车'); 
+        //     // } 
+            
+        //     // //判断如果用户按下了空格键(keycode=32)， 
+        //     // if(keyNum==32){ 
+        //     // alert('您按下了空格'); 
+        //     // }
+        // }
+        // input.onkeypress = () =>{
+        //     console.log('onkeypress')
+        // }
+    </script>
+</body>
