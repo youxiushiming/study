@@ -1,0 +1,241 @@
+<head>
+    <style>
+         tr {
+            /* display: flex;
+            flex-direction: row; */
+        }  
+        td {
+            width: 80px;
+            margin: 0;
+            padding: 0;
+            /* display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center; */
+            border: 1px solid #333;
+        }
+        #region-radio-wrapper, 
+        #product-radio-wrapper {
+            /* display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center; */
+        }
+    </style>
+</head>
+
+<body>
+        <div id="region-radio-wrapper">
+        </div>
+        <div id="product-radio-wrapper"></div>
+        <div id="table-wrapper">
+        </div>
+    <script>
+        let sourceData = [{
+            product: "手机",
+            region: "华东",
+            sale: [120, 100, 140, 160, 180, 185, 190, 210, 230, 245, 255, 270]
+        }, {
+            product: "手机",
+            region: "华北",
+            sale: [80, 70, 90, 110, 130, 145, 150, 160, 170, 185, 190, 200]
+        }, {
+            product: "手机",
+            region: "华南",
+            sale: [220, 200, 240, 250, 260, 270, 280, 295, 310, 335, 355, 380]
+        }, {
+            product: "笔记本",
+            region: "华东",
+            sale: [50, 60, 80, 110, 30, 20, 70, 30, 420, 30, 20, 20]
+        }, {
+            product: "笔记本",
+            region: "华北",
+            sale: [30, 35, 50, 70, 20, 15, 30, 50, 710, 130, 20, 20]
+        }, {
+            product: "笔记本",
+            region: "华南",
+            sale: [80, 120, 130, 140, 70, 75, 120, 90, 550, 120, 110, 100]
+        }, {
+            product: "智能音箱",
+            region: "华东",
+            sale: [10, 30, 4, 5, 6, 5, 4, 5, 6, 5, 5, 25]
+        }, {
+            product: "智能音箱",
+            region: "华北",
+            sale: [15, 50, 15, 15, 12, 11, 11, 12, 12, 14, 12, 40]
+        }, {
+            product: "智能音箱",
+            region: "华南",
+            sale: [10, 40, 10, 6, 5, 6, 8, 6, 6, 6, 7, 26]
+        }];
+        const select = document.querySelector('#region-radio-wrapper');
+        const proSelect = document.querySelector('#product-radio-wrapper');
+        const table = document.querySelector('#table-wrapper');
+        const getSelectValue = () => {
+            return select.options[select.options.selectedIndex].value
+        }
+        const addOption = (id, value) => {
+            for (let i = 0; i < value.length; i++) {
+                var selectbox = document.getElementById(id);
+                var newOption = document.createElement("input");
+                newOption.setAttribute("type", 'checkbox');
+                newOption.appendChild(document.createTextNode(value[i]));
+                newOption.setAttribute("value", value[i]);
+                newOption.setAttribute('checkbox-type', value[i] == 'all' ? 'all': 'single');
+                newOption.setAttribute("checked", true);
+                selectbox.appendChild(newOption);
+                selectbox.appendChild(document.createTextNode(value[i]))
+            }
+        }
+        const setRegSelect = () => {
+            addOption('region-radio-wrapper', ['all', '华东', '华北', '华南']);
+            // select.options.selectedIndex = 0;
+            // document.querySelector(`#region-radio-wrapper [checkbox-type=all]`).checked = true;
+        }
+        const getSingleSelectVal = (nodename) => {
+            let sel = [];
+            const single = document.querySelectorAll(`#${nodename} [checkbox-type=single]`);
+            for(let i = 0; i < single.length; i++){
+                if(single[i].checked){
+                    sel.push(single[i].value);
+                }
+            }
+            return sel;
+        }
+        const getSelectData = () => {
+            const isregallsel = getisAllSel('region-radio-wrapper');
+            const isproallsel = getisAllSel('product-radio-wrapper');
+            if(isproallsel && isregallsel){
+                return sourceData;
+            }else if(isproallsel){
+                const regSelectval = getSingleSelectVal('region-radio-wrapper');
+                console.log(regSelectval);
+                return sourceData.filter(item => regSelectval.includes(item['region']));
+            }
+            else if(isregallsel){
+                const proSelectval = getSingleSelectVal('product-radio-wrapper');
+                console.log(proSelectval);
+                return sourceData.filter(item => proSelectval.includes(item['product']));
+            }else {
+                const regSelectval = getSingleSelectVal('region-radio-wrapper');
+                const proSelectval = getSingleSelectVal('product-radio-wrapper');
+                return sourceData.filter(item => proSelectval.includes(item['product']) && regSelectval.includes(item['region']));
+            }
+        }     
+        const formatData  = (nodeName, data) => {
+            
+            let res = [];
+            for(let i = 0; i < data.length; i++){
+                const node = document.createElement(nodeName);
+                node.appendChild(document.createTextNode(data[i]));
+                res.push(node);
+            }
+            return res;
+            
+        }
+
+        const tableadd = (data) => {
+            for(let i = 0; i < data.length; i++){
+                table.appendChild(data[i]);
+            }
+        }
+        const clearTable = () => {
+            while(table.hasChildNodes()){
+                table.removeChild(table.firstChild);
+            }
+        }
+        const renderTable = (selData) => {
+            clearTable();
+            const data = ['商品', '地区', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            const td = formatData('td', data);
+            const htr = document.createElement('tr');
+            for(let i = 0; i < td.length; i++){
+                htr.appendChild(td[i]);
+            }
+            table.appendChild(htr);
+            for(let i = 0; i < selData.length; i++){
+                const tr = document.createElement('tr');
+                const trproduct = document.createElement('td');
+                trproduct.appendChild(document.createTextNode(selData[i].product));
+                tr.appendChild(trproduct);
+                const trregion = document.createElement('td');
+                trregion.appendChild(document.createTextNode(selData[i].region));
+                tr.appendChild(trregion)
+                for(let j = 0; j < selData[i].sale.length; j++){
+                    const trsale = document.createElement('td');
+                    trsale.appendChild(document.createTextNode(selData[i].sale[j]));
+                    tr.appendChild(trsale)
+                }
+                table.appendChild(tr);
+            }
+        }
+        const setProSelect = () => {
+            addOption('product-radio-wrapper', ['all', '手机', '笔记本', '智能音箱']);
+            document.querySelector(`#product-radio-wrapper [checkbox-type=all]`).checked = true;
+        }
+        const setAllSelect = (nodename) => {
+            const node = document.getElementById(nodename);
+            // const nodeall = document.querySelector(`#${nodeName} [checkbox-type=all]`)
+            const single = document.querySelectorAll(`#${nodename} [checkbox-type=single]`);
+            // if(nodeall.checked){
+                for(let i = 0; i < single.length; i++){
+                    single[i].checked = true;
+                }
+            // }
+        }
+        const getisAllSel = (nodename) => {
+            return document.querySelector(`#${nodename} [checkbox-type=all]`).checked;
+        }
+        const handleOnClick = (e, nodename) => {
+            if(e.target.nodeName.toLowerCase() == 'input'){
+                // 剩余已选中数据
+                const selvalue =  getSingleSelectVal(nodename);
+                console.log('selvalue', selvalue);
+                console.log('e.target.checked', e.target.checked);
+                if(e.target.getAttribute('checkbox-type') == 'all'){
+                    if(e.target.checked){
+                        // 当前点击勾选, 勾选所有的子元素
+                        setAllSelect(nodename);
+                    }else {
+                        // 取消全选 不操作
+                        return ;
+                    }
+                }else {
+                    if(selvalue.length == 0){
+                        // 当前无勾选项 该选项不能取消勾选
+                        e.target.checked = true;
+                        document.querySelector(`#${nodename} [checkbox-type=all]`).checked = false;
+                    }else if(selvalue.length == 3){
+                        // 当前全部勾选，设置全选按钮勾选
+                        document.querySelector(`#${nodename} [checkbox-type=all]`).checked = true;
+                    }else{
+                        document.querySelector(`#${nodename} [checkbox-type=all]`).checked = false;
+                    }
+                }
+            }
+        }
+        select.onchange = () => {
+            const selData = getSelectData();
+            renderTable(selData);
+        }
+        proSelect.onchange = () => {
+            const selData = getSelectData();
+            renderTable(selData);
+        }
+        
+        select.onclick = (e) => {
+            const nodename = 'region-radio-wrapper';
+            handleOnClick(e, nodename);
+        }
+        proSelect.onclick = (e) => {
+            const nodename = 'product-radio-wrapper';
+            handleOnClick(e, nodename);
+        }
+        window.onload = () => {
+            setRegSelect();
+            setProSelect();
+            const selData = getSelectData();
+            renderTable(selData);
+        }
+    </script>
+</body>

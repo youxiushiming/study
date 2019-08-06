@@ -1,0 +1,152 @@
+<head>
+    <style>
+         tr {
+            /* display: flex;
+            flex-direction: row; */
+        }  
+        td {
+            width: 80px;
+            margin: 0;
+            padding: 0;
+            /* display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center; */
+            border: 1px solid #333;
+        }
+        #region-radio-wrapper, 
+        #product-radio-wrapper {
+            /* display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center; */
+        }
+    </style>
+</head>
+
+<body>
+        <select id="region-select">
+        </select>
+        <div id="table-wrapper">
+        </div>
+    <script>
+        let sourceData = [{
+            product: "手机",
+            region: "华东",
+            sale: [120, 100, 140, 160, 180, 185, 190, 210, 230, 245, 255, 270]
+        }, {
+            product: "手机",
+            region: "华北",
+            sale: [80, 70, 90, 110, 130, 145, 150, 160, 170, 185, 190, 200]
+        }, {
+            product: "手机",
+            region: "华南",
+            sale: [220, 200, 240, 250, 260, 270, 280, 295, 310, 335, 355, 380]
+        }, {
+            product: "笔记本",
+            region: "华东",
+            sale: [50, 60, 80, 110, 30, 20, 70, 30, 420, 30, 20, 20]
+        }, {
+            product: "笔记本",
+            region: "华北",
+            sale: [30, 35, 50, 70, 20, 15, 30, 50, 710, 130, 20, 20]
+        }, {
+            product: "笔记本",
+            region: "华南",
+            sale: [80, 120, 130, 140, 70, 75, 120, 90, 550, 120, 110, 100]
+        }, {
+            product: "智能音箱",
+            region: "华东",
+            sale: [10, 30, 4, 5, 6, 5, 4, 5, 6, 5, 5, 25]
+        }, {
+            product: "智能音箱",
+            region: "华北",
+            sale: [15, 50, 15, 15, 12, 11, 11, 12, 12, 14, 12, 40]
+        }, {
+            product: "智能音箱",
+            region: "华南",
+            sale: [10, 40, 10, 6, 5, 6, 8, 6, 6, 6, 7, 26]
+        }];
+        const select = document.querySelector('#region-select');
+        const table = document.querySelector('#table-wrapper');
+        const getSelectValue = () => {
+            return select.options[select.options.selectedIndex].value
+        }
+        const addOption = (id, value) => {
+            for (let i = 0; i < value.length; i++) {
+                var selectbox = document.getElementById(id);
+                var newOption = document.createElement("option");
+                newOption.appendChild(document.createTextNode(value[i]));
+                newOption.setAttribute("value", value[i]);
+                selectbox.appendChild(newOption);
+            }
+        }
+        const setSelect = () => {
+            addOption('region-select', ['华东', '华北', '华南']);
+            select.options.selectedIndex = 0;
+        }
+        
+        const getSelectData = (type, value) => {
+            return sourceData.filter(item => item[type] == value);
+        }     
+        const formatData  = (nodeName, data) => {
+            
+            let res = [];
+            for(let i = 0; i < data.length; i++){
+                const node = document.createElement(nodeName);
+                node.appendChild(document.createTextNode(data[i]));
+                res.push(node);
+            }
+            return res;
+            
+        }
+
+        const tableadd = (data) => {
+            for(let i = 0; i < data.length; i++){
+                table.appendChild(data[i]);
+            }
+        }
+        const clearTable = () => {
+            while(table.hasChildNodes()){
+                table.removeChild(table.firstChild);
+            }
+        }
+        const renderTable = (selData) => {
+            clearTable();
+            const data = ['商品', '地区', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            const td = formatData('td', data);
+            const htr = document.createElement('tr');
+            for(let i = 0; i < td.length; i++){
+                htr.appendChild(td[i]);
+            }
+            table.appendChild(htr);
+            for(let i = 0; i < selData.length; i++){
+                const tr = document.createElement('tr');
+                const trproduct = document.createElement('td');
+                trproduct.appendChild(document.createTextNode(selData[i].product));
+                tr.appendChild(trproduct);
+                const trregion = document.createElement('td');
+                trregion.appendChild(document.createTextNode(selData[i].region));
+                tr.appendChild(trregion)
+                for(let j = 0; j < selData[i].sale.length; j++){
+                    const trsale = document.createElement('td');
+                    trsale.appendChild(document.createTextNode(selData[i].sale[j]));
+                    tr.appendChild(trsale)
+                }
+                table.appendChild(tr);
+            }
+        }
+        select.onchange = () => {
+            const selectValue = getSelectValue();
+            const selData = getSelectData('region', selectValue);
+            renderTable(selData);
+        }
+        window.onload = () => {
+            setSelect();
+            const selectValue = getSelectValue();
+            const selData = getSelectData('region', selectValue);
+            renderTable(selData);
+        }
+        
+    </script>
+</body>
