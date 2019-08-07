@@ -1,0 +1,90 @@
+<head>
+    <style>
+        tr {
+            /* display: flex;
+            flex-direction: row; */
+        }  
+        td {
+            width: 80px;
+            margin: 0;
+            padding: 0;
+            /* display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center; */
+            border: 1px solid #333;
+            text-align: center;
+        }
+        #region-radio-wrapper, 
+        #product-radio-wrapper{
+            /* display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center; */
+        } 
+        #table-wrapper input{
+            width: 50px;
+            text-align: center;
+        }
+        button {
+            width: 100px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="a">A</button>
+    <button id="b">B</button>
+    <button id="c">C</button>
+    <div id="cont"></div>
+<script>
+    // function 解析Hash，获取状态参数() {
+    //     取到需要的值，并返回
+    // }
+    const getHashPrams = () => {
+        // console.log(location.hash);
+        // return location.hash ? location.hash.split('#')[1] : ''
+        const query = location.href.includes('?') ? location.href.split('?')[1] : null;
+        return query;
+    }
+    // function 渲染函数() {
+    //     内容 = 解析Hash，获取状态参数()
+    //     cont的innerHTML = 内容
+    // }
+    const cont = document.querySelector('#cont');
+    const render = () => {
+        const params = getHashPrams();
+        if(params){
+            const btn = document.querySelector(`#${params}`);
+            cont.innerHTML = btn.innerText;
+        }else{
+            const btn = document.querySelector(`#a`);
+            cont.innerHTML = btn.innerText;
+        }
+    }
+    // 按钮点击事件 = function() {
+    //     设置新的hash
+    // }
+    document.onclick = (e) => {
+        if(e.target.nodeName.toLowerCase() == 'button'){
+            // location.hash = e.target.id;
+            // console.log('location.hash', location.hash);
+            history.pushState({ query: e.target.id}, null, location.href.split('?')[0] + '?' + e.target.id);
+            render();
+        }
+    }
+
+    // window.onhashchange = 渲染函数
+    // window.onhashchange = () => {
+    //     render();
+    // }
+    window.addEventListener('popstate', () => {
+        render();
+    })
+    
+    // 进来先执行一次渲染函数()
+    render();
+</script>
+</body>
