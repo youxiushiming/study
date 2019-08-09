@@ -93,60 +93,88 @@ Staff.prototype.finish = function() {
 // 服务员类，继承自职员
 // 完成一次工作：如果参数是个数组，则记录客人点菜，如果参数不是数组则是上菜行为
 
-function Waiter(name, pay) {
-    Staff.call(this, name, pay);
-}
-Waiter.prototype = new Staff();
-Waiter.prototype.finish = function(work) {
-    if(Array.isArray(work)){
-        console.log('记录客人点菜: '+ JSON.stringify(work));
-        
-    }else{
-        console.log('上菜行为: ' + work);
-    }
-    return work;
-}
+
 
 const createWaiter = (function(name, pay) {
-        var waiterInstance;
-        return function(name, pay) {
-            if(!waiterInstance){
-                waiterInstance = new Waiter(name, pay);
-            }
-            return waiterInstance;
-        }
+    function Waiter(name, pay) {
+        Staff.call(this, name, pay);
     }
-)();
-// createWaiter.prototype.callShangcai = function(work) {
-//     console.log(`通知上菜：${work}`);
-// }
+    // 原型继承
+    Waiter.prototype = Object.create(Staff.prototype);
+    // 原型构造函数指向自己
+    Waiter.prototype.constructor = Waiter;
+    Waiter.prototype.finish = function(work) {
+        if(Array.isArray(work)){
+            console.log('记录客人点菜: '+ JSON.stringify(work));
+            
+        }else{
+            console.log('上菜行为: ' + work);
+        }
+        return work;
+    }
+    // Waiter.prototype.callShangcai = function(work) {
+    //     console.log(`通知上菜：${work}`);
+    //     return work;
+    // }
+      // 缓存单例的变量
+      var instance;
+    // 静态变量和方法
+    var _static = {
+        name: 'SingletonWaiter',
+        callShangcai: function(work){
+            console.log(`通知上菜：${work}`);
+            return work;
+        },
+        getInstance: function (id, name, salary) {
+            if (instance === undefined) {
+                instance = new Waiter(id, name, salary);
+            }
+            return instance;
+        }
+    };
+    return _static;
+})();
+
 
 // 厨师类，继承自职员
 // 完成一次工作：烹饪出菜品
 
-function Cook(name, pay) {
-    Staff.call(this, name, pay);
-}
-Cook.prototype = new Staff();
-Cook.prototype.finish = function(work) {
-    if(Array.isArray(work)){
-        console.log('获取客人点菜: '+ JSON.stringify(work));
-    }else{
-        console.log('烹饪出菜品: ' + work);
-    }
-    return work;
-}
-Cook.prototype.callWaiter = function(work){
-    createWaiter.callShangcai(work);
-}
+
 const createCook = (function(name, pay) {
-    var cookInstance;
-    return function(name, pay){
-        if(!cookInstance){
-            cookInstance = new Cook(name, pay);
-        }
-        return cookInstance;
+    function Cook(name, pay) {
+        Staff.call(this, name, pay);
     }
+    // 原型继承
+    Cook.prototype = Object.create(Staff.prototype);
+    // 原型构造函数指向自己
+    Cook.prototype.constructor = Cook;
+    Cook.prototype.finish = function(work) {
+        if(Array.isArray(work)){
+            console.log('获取客人点菜: '+ JSON.stringify(work));
+        }else{
+            console.log('烹饪出菜品: ' + work);
+        }
+        return work;
+    }
+    Cook.prototype.callWaiter = function(work){
+        createWaiter.callShangcai(work);
+    }
+     // 缓存单例的变量
+     var instance;
+    // 静态变量和方法
+    var _static = {
+        name: 'SingletonCook',
+        // callWaiter: function(work){
+        //     createWaiter.callShangcai(work);
+        // },
+        getInstance: function (id, name, salary) {
+            if (instance === undefined) {
+                instance = new Cook(id, name, salary);
+            }
+            return instance;
+        }
+    };
+    return _static;
 })();
 // 顾客类
 // 方法：点菜，吃
@@ -176,8 +204,8 @@ var ifeRestaurant = new createRestaurant({
     staff: []
 });
 const MENUS = ['A', 'B', 'C', 'D', 'E','F','G', 'H','I','J','L']
-var newCook =  new createCook("Tony", 10000);
-const newWaiter = new createWaiter('lily', 20000);
+var newCook =  createCook.getInstance("Tony", 10000);
+const newWaiter = createWaiter.getInstance('lily', 20000);
 ifeRestaurant.hire(newCook);
 ifeRestaurant.hire(newWaiter);
 console.log(ifeRestaurant.staff);
@@ -192,9 +220,12 @@ for(let i = 0; i < clientQuene.length; i++){
     }
     // 记录点菜
     newWaiter.finish(ordermenu[client].order);
-    newCook.finish(ordermenu[client].order);
+    
     for(let j = 0; j < ordermenu[client].order.length; j++){
         const finishCook = newCook.finish(ordermenu[client].order[j]);
+        // 厨师完成做菜
+        newCook.finish(ordermenu[client].order[j]);
+        newCook.callWaiter(ordermenu[client].order[j])
         newWaiter.finish(ordermenu[client].order[j])
     }
     
